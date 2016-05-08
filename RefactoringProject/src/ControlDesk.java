@@ -41,12 +41,15 @@
  */
 
 import java.util.*;
+import java.lang.Throwable.*;
 import java.io.*;
 
 class ControlDesk extends Thread {
 
 	/** The collection of Lanes */
 	private HashSet lanes;
+
+	/**
 
 	/** The party wait queue */
 	private Queue partyQueue;
@@ -60,22 +63,23 @@ class ControlDesk extends Thread {
     /**
      * Constructor for the ControlDesk class
      *
-     * @param numlanes	the numbler of lanes to be represented
+     * @param inNumlanes	the number of lanes to be represented
      *
      */
 
-	public ControlDesk(int numLanes) {
-		this.numLanes = numLanes;
+	public ControlDesk(int inNumLanes) {
+		numLanes = inNumLanes;
 		lanes = new HashSet(numLanes);
 		partyQueue = new Queue();
 
 		subscribers = new Vector();
 
 		for (int i = 0; i < numLanes; i++) {
-			lanes.add(new Lane());
+			Lane newLane = new Lane();
+			lanes.add(newLane);
 		}
 		
-		this.start();
+		start();
 
 	}
 	
@@ -90,7 +94,7 @@ class ControlDesk extends Thread {
 			
 			try {
 				sleep(250);
-			} catch (Exception e) {}
+			} catch (Throwable e) {}
 		}
 	}
 		
@@ -132,19 +136,12 @@ class ControlDesk extends Thread {
 		while (it.hasNext() && partyQueue.hasMoreElements()) {
 			Lane curLane = (Lane) it.next();
 
-			if (curLane.isPartyAssigned() == false) {
+			if (!curLane.isPartyAssigned()) {
 				System.out.println("ok... assigning this party");
 				curLane.assignParty(((Party) partyQueue.next()));
 			}
 		}
 		publish(new ControlDeskEvent(getPartyQueue()));
-	}
-
-    /**
-     */
-
-	public void viewScores(Lane ln) {
-		// TODO: attach a LaneScoreView object to that lane
 	}
 
     /**
@@ -160,8 +157,8 @@ class ControlDesk extends Thread {
 			Bowler newBowler = registerPatron(((String) partyNicks.get(i)));
 			partyBowlers.add(newBowler);
 		}
-		Party newParty = new Party(partyBowlers);
-		partyQueue.add(newParty);
+
+		partyQueue.add(new Party(partyBowlers));
 		publish(new ControlDeskEvent(getPartyQueue()));
 	}
 

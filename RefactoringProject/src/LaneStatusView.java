@@ -28,10 +28,10 @@ public class LaneStatusView implements ActionListener, LaneObserver, PinsetterOb
 	boolean laneShowing;
 	boolean psShowing;
 
-	public LaneStatusView(Lane lane, int laneNum ) {
+	public LaneStatusView(Lane inLane, int inLaneNum ) {
 
-		this.lane = lane;
-		this.laneNum = laneNum;
+		lane = inLane;
+		laneNum = inLaneNum;
 
 		laneShowing=false;
 		psShowing=false;
@@ -57,7 +57,6 @@ public class LaneStatusView implements ActionListener, LaneObserver, PinsetterOb
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new FlowLayout());
 
-		Insets buttonMargin = new Insets(4, 4, 4, 4);
 
 		viewLane = new JButton("View Lane");
 		JPanel viewLanePanel = new JPanel();
@@ -88,8 +87,6 @@ public class LaneStatusView implements ActionListener, LaneObserver, PinsetterOb
 
 		jp.add( cLabel );
 		jp.add( curBowler );
-//		jp.add( fLabel );
-//		jp.add( foul );
 		jp.add( pdLabel );
 		jp.add( pinsDown );
 		
@@ -115,10 +112,10 @@ public class LaneStatusView implements ActionListener, LaneObserver, PinsetterOb
 		}
 		if (e.getSource().equals(viewLane)) {
 			if ( lane.isPartyAssigned() ) { 
-				if ( laneShowing == false ) {
+				if ( !laneShowing ) {
 					lv.show();
 					laneShowing=true;
-				} else if ( laneShowing == true ) {
+				} else if ( laneShowing ) {
 					lv.hide();
 					laneShowing=false;
 				}
@@ -133,7 +130,7 @@ public class LaneStatusView implements ActionListener, LaneObserver, PinsetterOb
 	}
 
 	public void receiveLaneEvent(LaneEvent le) {
-		curBowler.setText( ( (Bowler)le.getBowler()).getNickName() );
+		curBowler.setText( ( le.getBowler()).getNickName() );
 		if ( le.isMechanicalProblem() ) {
 			maintenance.setBackground( Color.RED );
 		}	
@@ -148,8 +145,7 @@ public class LaneStatusView implements ActionListener, LaneObserver, PinsetterOb
 
 	public void receivePinsetterEvent(PinsetterEvent pe) {
 		pinsDown.setText( ( new Integer(pe.totalPinsDown()) ).toString() );
-//		foul.setText( ( new Boolean(pe.isFoulCommited()) ).toString() );
-		
+
 	}
 
 }
