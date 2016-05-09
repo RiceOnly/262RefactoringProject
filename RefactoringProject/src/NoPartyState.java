@@ -5,5 +5,12 @@ public class NoPartyState implements LaneState{
 
     public void run(){
 
+        //return gamefinished variable
+        return false;
+    }
+
+    public boolean getGameStatus()
+    {
+        return false;
     }
 }

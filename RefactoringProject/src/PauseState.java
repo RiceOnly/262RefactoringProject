@@ -10,5 +10,13 @@ public class PauseState implements LaneState {
         try {
             java.lang.Thread.sleep(10);
         } catch (Exception e) {}
+
+        //return gamefinished variable
+        return false;
+    }
+
+    public boolean getGameStatus()
+    {
+        return false;
     }
 }

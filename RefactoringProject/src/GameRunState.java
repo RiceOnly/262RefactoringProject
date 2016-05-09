@@ -38,5 +38,14 @@ public class GameRunState implements LaneState {
                 gameNumber++;
             }
         }
+
+
+        //return gamefinished variable
+        return false;
+    }
+
+    public boolean getGameStatus()
+    {
+        return false;
     }
 }
