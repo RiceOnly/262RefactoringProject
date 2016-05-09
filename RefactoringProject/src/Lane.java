@@ -131,10 +131,7 @@
  * 
  */
 
-import java.util.Vector;
-import java.util.Iterator;
-import java.util.HashMap;
-import java.util.Date;
+import java.util.*;
 
 public class Lane extends Thread implements PinsetterObserver {	
 	private Party party;
@@ -151,6 +148,12 @@ public class Lane extends Thread implements PinsetterObserver {
 	private int bowlIndex;
 	private int frameNumber;
 	private boolean tenthFrameStrike;
+
+	private int[] curScores;
+	private int[][] cumulScores;
+	private boolean canThrowAgain;
+
+	private int[][] finalScores;
 
 	private ScoreControl scoreController = new ScoreControl();
 	private int gameNumber;
@@ -241,7 +244,7 @@ public class Lane extends Thread implements PinsetterObserver {
 				// TODO: send record of scores to control desk
 				if (result == 1) {					// yes, want to play again
 
-					scoreController.resetScores( party );
+					scoreController.resetScores( party, scores );
 					gameFinished = false;
 					frameNumber = 0;
 					resetBowlerIterator();
@@ -255,7 +258,7 @@ public class Lane extends Thread implements PinsetterObserver {
 					party = null;
 					partyAssigned = false;
 					
-					publish(lanePublish());
+					publish();
 					
 					int myIndex = 0;
 					while (scoreIt.hasNext()){
@@ -293,7 +296,7 @@ public class Lane extends Thread implements PinsetterObserver {
 	public void receivePinsetterEvent(PinsetterEvent pe) {
 		
 			if (pe.pinsDownOnThisThrow() >=  0) {			// this is a real throw
-				scoreController.markScore(currentThrower, frameNumber + 1, pe.getThrowNumber(), pe.pinsDownOnThisThrow(), scores, ball, bowlIndex);
+				scoreController.markScore(currentThrower, frameNumber + 1, pe.getThrowNumber(), pe.pinsDownOnThisThrow(), scores, bowlIndex, cumulScores);
 				publish();
 
 				// next logic handles the ?: what conditions dont allow them another throw?
@@ -308,21 +311,16 @@ public class Lane extends Thread implements PinsetterObserver {
 				
 					if ((pe.totalPinsDown() != 10) && (pe.getThrowNumber() == 2 && tenthFrameStrike == false)) {
 						canThrowAgain = false;
-						//publish( lanePublish() );
 					}
 				
 					if (pe.getThrowNumber() == 3) {
 						canThrowAgain = false;
-						//publish( lanePublish() );
 					}
 				} else { // its not the 10th frame
-			
 					if (pe.pinsDownOnThisThrow() == 10) {		// threw a strike
 						canThrowAgain = false;
-						//publish( lanePublish() );
 					} else if (pe.getThrowNumber() == 2) {
 						canThrowAgain = false;
-						//publish( lanePublish() );
 					} else if (pe.getThrowNumber() == 3)  
 						System.out.println("I'm here...");
 				}
@@ -339,30 +337,6 @@ public class Lane extends Thread implements PinsetterObserver {
 	 */
 	private void resetBowlerIterator() {
 		bowlerIterator = (party.getMembers()).iterator();
-	}
-
-	/** resetScores()
-	 * 
-	 * resets the scoring mechanism, must be called before scoring starts
-	 * 
-	 * @pre the party has been assigned
-	 * @post scoring system is initialized
-	 */
-	private void resetScores() {
-		Iterator bowlIt = (party.getMembers()).iterator();
-
-		while ( bowlIt.hasNext() ) {
-			int[] toPut = new int[25];
-			for ( int i = 0; i != 25; i++){
-				toPut[i] = -1;
-			}
-			scores.put( bowlIt.next(), toPut );
-		}
-		
-		
-		
-		gameFinished = false;
-		frameNumber = 0;
 	}
 		
 	/** assignParty()
@@ -384,7 +358,7 @@ public class Lane extends Thread implements PinsetterObserver {
 		finalScores = new int[party.getMembers().size()][128]; //Hardcoding a max of 128 games, bite me.
 		gameNumber = 0;
 
-		scoreController.resetScores(party);
+		scoreController.resetScores( party, scores );
 		gameFinished = false;
 		frameNumber = 0;
 		publish();
@@ -437,12 +411,12 @@ public class Lane extends Thread implements PinsetterObserver {
 	 * @param event	Event that is to be published
 	 */
 
-	public void publish( LaneEvent event ) {
+	public void publish() {
 		if( subscribers.size() > 0 ) {
 			Iterator eventIterator = subscribers.iterator();
 			
 			while ( eventIterator.hasNext() ) {
-				( (LaneObserver) eventIterator.next()).receiveLaneEvent( event );
+				( (LaneObserver) eventIterator.next()).receiveLaneEvent( new LaneEvent(party, bowlIndex, currentThrower, cumulScores, scores, frameNumber+1, curScores, ball, gameIsHalted) );
 			}
 		}
 	}
@@ -462,7 +436,7 @@ public class Lane extends Thread implements PinsetterObserver {
 	 */
 	public void pauseGame() {
 		gameIsHalted = true;
-		publish(lanePublish());
+		publish();
 	}
 	
 	/**
@@ -470,7 +444,7 @@ public class Lane extends Thread implements PinsetterObserver {
 	 */
 	public void unPauseGame() {
 		gameIsHalted = false;
-		publish(lanePublish());
+		publish();
 	}
 
 }
