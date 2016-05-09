@@ -138,7 +138,7 @@ public class Lane extends Thread implements PinsetterObserver {
 	private Pinsetter setter;
 	private HashMap scores;
 	private Vector subscribers;
-	private LaneState currState;
+	private LaneState currState = new PauseState();
 
 	private boolean gameIsHalted;
 
@@ -192,12 +192,14 @@ public class Lane extends Thread implements PinsetterObserver {
 	public void run() {
 
 		while (true) {
-         if(currState != null){
+           
 			   currState.run();
-         }
+            
 			try {
 				sleep(10);
 			} catch (Exception e) {}
+         publish();
+         
 		}
 	}
 
@@ -278,7 +280,8 @@ public class Lane extends Thread implements PinsetterObserver {
 		scoreController.resetScores( party, scores );
 		gameFinished = false;
 		frameNumber = 0;
-		publish();
+      unPauseGame();
+      
 	}
 
 	/** isPartyAssigned()
@@ -333,6 +336,7 @@ public class Lane extends Thread implements PinsetterObserver {
 			Iterator eventIterator = subscribers.iterator();
 			
 			while ( eventIterator.hasNext() ) {
+            
 				( (LaneObserver) eventIterator.next()).receiveLaneEvent( new LaneEvent(party, bowlIndex, currentThrower, cumulScores, scores, frameNumber+1, curScores, ball, gameIsHalted) );
 			}
 		}

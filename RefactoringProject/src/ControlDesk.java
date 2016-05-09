@@ -90,9 +90,10 @@ class ControlDesk extends Thread {
 	 */
 	public void run() {
 		while (true) {
-			
+		
 			assignLane();
 			
+         
 			try {
 				sleep(250);
 			} catch (Throwable e) {}
@@ -140,7 +141,7 @@ class ControlDesk extends Thread {
 			if (!curLane.isPartyAssigned()) {
 				System.out.println("ok... assigning this party");
 				curLane.assignParty(((Party) partyQueue.next()));
-            curLane.unPauseGame();
+         
 			}
 		}
 		publish(new ControlDeskEvent(getPartyQueue()));
