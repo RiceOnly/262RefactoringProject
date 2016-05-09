@@ -8,6 +8,7 @@ public class GameRunState implements LaneState {
     public void initiateState(Lane inLane)
     {
         lane = inLane;
+        run();
     }
 
     public void run() {

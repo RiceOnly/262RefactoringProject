@@ -160,6 +160,7 @@ public class Lane extends Thread implements PinsetterObserver {
 	private int gameNumber;
 
 	private Bowler currentThrower;			// = the thrower who just took a throw
+   
 
 	/** Lane()
 	 *
@@ -181,6 +182,7 @@ public class Lane extends Thread implements PinsetterObserver {
 		setter.subscribe( this );
 
 		this.start();
+      
 	}
 
 	/** run()
@@ -190,9 +192,9 @@ public class Lane extends Thread implements PinsetterObserver {
 	public void run() {
 
 		while (true) {
-
-			currState.run();
-
+         if(currState != null){
+			   currState.run();
+         }
 			try {
 				sleep(10);
 			} catch (Exception e) {}
@@ -352,6 +354,8 @@ public class Lane extends Thread implements PinsetterObserver {
 	public void pauseGame() {
 		gameIsHalted = true;
 		publish();
+      LaneState Pause = new PauseState();
+      changeState(Pause);
 	}
 	
 	/**
@@ -359,6 +363,8 @@ public class Lane extends Thread implements PinsetterObserver {
 	 */
 	public void unPauseGame() {
 		gameIsHalted = false;
+      LaneState run = new GameRunState();
+      changeState(run);
 		publish();
 	}
 
@@ -398,6 +404,13 @@ public class Lane extends Thread implements PinsetterObserver {
 			}
 		}
 	}
+   
+   public void changeState(LaneState newState)
+   {
+      this.currState = newState;
+      currState.initiateState(this);
+      System.out.println("changed!");
+   }
 
 	public void finishGame()
 	{

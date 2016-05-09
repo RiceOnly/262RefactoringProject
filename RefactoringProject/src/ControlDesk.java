@@ -76,6 +76,7 @@ class ControlDesk extends Thread {
 
 		for (int i = 0; i < numLanes; i++) {
 			Lane newLane = new Lane();
+         
 			lanes.add(newLane);
 		}
 		
@@ -139,6 +140,7 @@ class ControlDesk extends Thread {
 			if (!curLane.isPartyAssigned()) {
 				System.out.println("ok... assigning this party");
 				curLane.assignParty(((Party) partyQueue.next()));
+            curLane.unPauseGame();
 			}
 		}
 		publish(new ControlDeskEvent(getPartyQueue()));
