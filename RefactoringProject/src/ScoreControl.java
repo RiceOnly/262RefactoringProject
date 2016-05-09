@@ -161,4 +161,8 @@ public class ScoreControl {
         }
         return totalScore;
     }
+
+    public ScoreReport getScoreReport( Bowler thisBowler, int[] finalScores, int gameNumber){
+        return new ScoreReport( thisBowler, finalScores, gameNumber );
+    }
 }
