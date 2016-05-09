@@ -138,6 +138,7 @@ public class Lane extends Thread implements PinsetterObserver {
 	private Pinsetter setter;
 	private HashMap scores;
 	private Vector subscribers;
+	private LaneState currState;
 
 	private boolean gameIsHalted;
 
@@ -189,17 +190,19 @@ public class Lane extends Thread implements PinsetterObserver {
 	public void run() {
 
 		while (true) {
+
+			currState.start();
 			if (partyAssigned && !gameFinished) {	// we have a party on this lane,
 								// so next bower can take a throw
 
-				while (gameIsHalted) {
+/*				while (gameIsHalted) {
 					try {
 						sleep(10);
 					} catch (Exception e) {}
 				}
+*/
 
-
-				if (bowlerIterator.hasNext()) {
+/*				if (bowlerIterator.hasNext()) {
 					currentThrower = (Bowler)bowlerIterator.next();
 
 					canThrowAgain = true;
@@ -232,6 +235,8 @@ public class Lane extends Thread implements PinsetterObserver {
 						gameNumber++;
 					}
 				}
+
+*/
 			}
 
 			else if (partyAssigned && gameFinished)
