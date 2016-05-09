@@ -8,7 +8,6 @@ public class ScoreControl {
     private boolean canThrowAgain;
 
     private int[][] finalScores;
-    private int gameNumber;
 
     /** ScoreControl
      *
@@ -16,7 +15,9 @@ public class ScoreControl {
      *
      */
 
-    public ScoreControl{}
+    public ScoreControl() {}
+
+
     /** resetScores()
      *
      * resets the scoring mechanism, must be called before scoring starts
@@ -24,7 +25,7 @@ public class ScoreControl {
      * @pre the party has been assigned
      * @post scoring system is initialized
      */
-    private void resetScores(Party inParty) {
+    private void resetScores(Party inParty, HashMap inScores) {
         Iterator bowlIt = (inParty.getMembers()).iterator();
 
         while ( bowlIt.hasNext() ) {
@@ -32,13 +33,8 @@ public class ScoreControl {
             for ( int i = 0; i != 25; i++){
                 toPut[i] = -1;
             }
-            scores.put( bowlIt.next(), toPut );
+            inScores.put( bowlIt.next(), toPut );
         }
-
-
-
-        gameFinished = false;
-        frameNumber = 0;
     }
 
     private void markScore( Bowler Cur, int frame, int ball, int score, Hashmap inScores ){
@@ -50,7 +46,7 @@ public class ScoreControl {
 
         curScore[ index - 1] = score;
         inScores.put(Cur, curScore);
-        getScore( Cur, frame );
+        getScore( Cur, frame, inScores );
     }
 
 
@@ -63,11 +59,12 @@ public class ScoreControl {
      *
      * @return			The bowlers total score
      */
-    private int getScore( Bowler Cur, int frame) {
+    private int getScore( Bowler Cur, int frame, HashMap inScores) {
         int[] curScore;
         int strikeballs;
         int totalScore = 0;
-        curScore = (int[]) scores.get(Cur);
+
+        curScore = (int[]) inScores.get(Cur);
         for (int i = 0; i != 10; i++){
             cumulScores[bowlIndex][i] = 0;
         }

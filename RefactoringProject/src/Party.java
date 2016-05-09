@@ -25,7 +25,9 @@
 import java.util.*;
 
 public class Party {
-
+   
+   Bowler leader;
+   
 	/** Vector of bowlers in this party */	
     private Vector myBowlers;
 	
@@ -48,5 +50,15 @@ public class Party {
     public Vector getMembers() {
 		return myBowlers;
     }
+    
+    /**
+    * Accessor for party leader
+    *
+    *@return String Party leaders name
+    */
+    public String Leader()
+    {
+      return((Bowler) this.getMembers().get(0)).getNickName() + "'s Party";
+     }
 
 }
