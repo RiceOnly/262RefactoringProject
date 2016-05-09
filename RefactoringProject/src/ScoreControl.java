@@ -15,6 +15,7 @@ public class ScoreControl {
      *  Constructor for class
      *
      */
+
     public ScoreControl{}
     /** resetScores()
      *
@@ -23,8 +24,8 @@ public class ScoreControl {
      * @pre the party has been assigned
      * @post scoring system is initialized
      */
-    private void resetScores() {
-        Iterator bowlIt = (party.getMembers()).iterator();
+    private void resetScores(Party inParty) {
+        Iterator bowlIt = (inParty.getMembers()).iterator();
 
         while ( bowlIt.hasNext() ) {
             int[] toPut = new int[25];
@@ -40,17 +41,16 @@ public class ScoreControl {
         frameNumber = 0;
     }
 
-    private void markScore( Bowler Cur, int frame, int ball, int score ){
+    private void markScore( Bowler Cur, int frame, int ball, int score, Hashmap inScores ){
         int[] curScore;
         int index =  ( (frame - 1) * 2 + ball);
 
-        curScore = (int[]) scores.get(Cur);
+        curScore = (int[]) inScores.get(Cur);
 
 
         curScore[ index - 1] = score;
-        scores.put(Cur, curScore);
+        inScores.put(Cur, curScore);
         getScore( Cur, frame );
-        publish();
     }
 
 
