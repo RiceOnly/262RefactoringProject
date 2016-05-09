@@ -3,7 +3,8 @@
  */
 public interface LaneState{
 
-    boolean run();
 
-    boolean getGameStatus();
+    void initiateState(Lane inLane);
+
+    void run();
 }

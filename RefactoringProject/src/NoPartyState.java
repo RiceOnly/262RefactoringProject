@@ -3,14 +3,14 @@
  */
 public class NoPartyState implements LaneState{
 
-    public void run(){
+    Lane lane;
 
-        //return gamefinished variable
-        return false;
+    public void initiateState(Lane inLane)
+    {
+        lane = inLane;
     }
 
-    public boolean getGameStatus()
-    {
-        return false;
+    public void run(){
+
     }
 }

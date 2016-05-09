@@ -5,18 +5,18 @@
  */
 public class PauseState implements LaneState {
 
+    Lane lane;
+
+    public void initiateState(Lane inLane)
+    {
+        lane = inLane;
+    }
+
     public void run() {
 
         try {
             java.lang.Thread.sleep(10);
         } catch (Exception e) {}
 
-        //return gamefinished variable
-        return false;
-    }
-
-    public boolean getGameStatus()
-    {
-        return false;
     }
 }
